@@ -1,0 +1,1 @@
+pyinstaller.exe --clean --onefile --windowed --distpath ../dist/Kotidien.win --workpath ../build/win -y Kotidien.spec

@@ -1,0 +1,9 @@
+Package: {name}
+Version: {version}
+Section: base
+Priority: optional
+Architecture: all
+Depends: libc6 (>= 2.29)
+Maintainer: {author} <{mail}>
+Description: {description}
+Homepage: {url}

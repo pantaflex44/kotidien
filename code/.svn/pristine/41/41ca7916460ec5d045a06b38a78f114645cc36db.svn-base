@@ -1,0 +1,22 @@
+2021.0.1.6:
+-----------
+
+    - Remplacement de l'outil de compilation 'cx_freeze' par 'pyinstaller'
+    - Création du script de compilation
+    - Correction de divers bugs
+
+2021.0.1.5:
+-----------
+
+    - Freeze du binaire au format 32bits sous Microsoft Windows
+      Désormais compatible Windows 7 et supérieurs x86 x64
+
+    - Correction de l'encodage des caractères sous Windows.
+      Certains accents ne paraissaient pas encodés correctement lors de l'affichage des différentes fenetres.
+
+
+
+2021.0.1.4:
+-----------
+
+    - Première Beta

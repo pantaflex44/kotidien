@@ -1,0 +1,28 @@
+VSVersionInfo(
+    ffi=FixedFileInfo(
+        filevers=(2021, 0, 2, 0),
+        prodvers=(2021, 0, 2, 0),
+        mask=0x3f,
+        flags=0x0,
+        OS=0x40004,
+        fileType=0x1,
+        subtype=0x0,
+        date=(2020, 11, 5)
+        ),
+    kids=[
+        StringFileInfo(
+            [
+                StringTable(
+                    u'040904B0',
+                    [StringStruct(u'CompanyName', u'Christophe LEMOINE'),
+                     StringStruct(u'FileDescription', u'Gestion des finances personnelles assistee par ordinateur.'),
+                     StringStruct(u'FileVersion', u'2021.0.2.0'),
+                     StringStruct(u'InternalName', u'Kotidien'),
+                     StringStruct(u'LegalCopyright', u'Copyright (c)2020-2021 Christophe LEMOINE'),
+                     StringStruct(u'OriginalFilename', u'Kotidien.exe'),
+                     StringStruct(u'ProductName', u'Kotidien'),
+                     StringStruct(u'ProductVersion', u'2021.0.2.0')])
+                    ]),
+                    VarFileInfo([VarStruct(u'Translation', [1033, 1200])])
+                    ]
+                    )

@@ -1,0 +1,15 @@
+#!/usr/bin/env xdg-open
+
+[Desktop Entry]
+Version=2021.0.2.0
+Encoding=UTF-8
+Name=Kotidien
+GenericName=Finances personnelles
+Comment=Gestion des finances personnelles assistee par ordinateur.
+Exec=/usr/local/bin/Kotidien
+Icon=/usr/local/Kotidien/Icon.png
+Terminal=false
+Type=Application
+Categories=Application;Office;
+Name[fr_FR]=Kotidien
+MimeType=application/kot;

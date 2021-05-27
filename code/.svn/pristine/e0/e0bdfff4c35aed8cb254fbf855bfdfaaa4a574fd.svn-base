@@ -1,0 +1,308 @@
+#!/usr/bin/python3
+# -*- coding: utf-8 -*-
+"""
+@package Kotidien.ui
+"""
+"""
+Kotidien - Finances personnelles assistées par ordinateur
+Copyright (C) 2020-2021 Christophe LEMOINE
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
+"""
+import sys
+import os
+import json
+from datetime import datetime
+import webbrowser
+
+from PyQt5 import QtCore, QtWidgets, QtGui, uic
+from PyQt5.QtCore import *
+from PyQt5.QtWidgets import *
+from PyQt5.QtGui import *
+
+import libs.pycountry
+import currency
+import libs.completer
+import resources
+import appinfos
+import funcs
+import icons
+import globalsv
+
+from datamodels import *
+
+class SettingsDialog(QDialog):
+
+    _settings = None
+    _locale = None
+    _translate = None
+
+    def __init__(self, settings, locale, translate, parent=None, *args, **kwargs):
+        self._settings = settings
+        self._locale = locale
+        self._translate = translate
+        super(SettingsDialog, self).__init__(parent, Qt.Window |
+                                             Qt.WindowTitleHint | Qt.CustomizeWindowHint, *args, **kwargs)
+        self._init_ui()
+
+    def _init_ui(self):
+        # self
+        self.ui = funcs.loadUiResource(
+            funcs.rc('/ui/' + self.__class__.__name__ + '.ui'), self)
+        self.setLocale(QLocale(self._locale))
+        self.ui.setLocale(QLocale(self._locale))
+        self.setModal(True)
+        qtRectangle = self.frameGeometry()
+        centerPoint = QDesktopWidget().geometry().center()
+        qtRectangle.moveCenter(centerPoint)
+        self.move(qtRectangle.topLeft())
+        self.setFixedSize(self.size())
+        self.setWindowIcon(QIcon(icons.get('settings.png')))
+
+        # buttonBox
+        self.buttonBox.button(
+            QDialogButtonBox.Save).clicked.connect(self.validateForm)
+
+        # checkboxes
+        checkboxes = [
+            ['show_splashscreen', self.show_splashscreen],
+            ['view_accounts_cb', self.view_accounts_cb],
+            ['selective_expand', self.selective_expand],
+            ['Accounts/default_sort_descending',
+             self.default_sort_descending],
+            ['default_filter_hide_pointed', self.default_filter_hide_pointed],
+            ['default_filter_active', self.default_filter_active],
+            ['Planner/auto_post', self.auto_post],
+            ['Planner/auto_delete_finished', self.auto_delete_finished],
+            ['create_save', self.create_save]
+        ]
+        for c in checkboxes:
+            c[1].setCheckState(Qt.Checked if str(self._settings.value(
+                c[0], globalsv.default_params[c[0]])).lower() == 'true' else Qt.Unchecked)
+
+        # Accounts/default_sort_column
+        self.default_sort_column.model().clear()
+        m = QStandardItemModel()
+        items = [
+                [funcs.tr("Dates"), 0],
+                [funcs.tr("Etats"), 2],
+                [funcs.tr("Tiers"), 3],
+                [funcs.tr("Dénominations"), 4],
+                [funcs.tr("Commentaires"), 5],
+                [funcs.tr("Types"), 6],
+                [funcs.tr("Catégories"), 7],
+                [funcs.tr("Montants"), 8]
+        ]
+        for item in items:
+            c = QStandardItem(item[0])
+            c.setEditable(False)
+            c.setData(item[1], Qt.UserRole)
+            m.appendRow(c)
+        self.default_sort_column.setModel(m)
+        idx = self.default_sort_column.findData(str(self._settings.value('Accounts/default_sort_column',
+                                                                         globalsv.default_params['Accounts/default_sort_column'])))
+        self.default_sort_column.setCurrentIndex(idx)
+
+        # default_filter_date
+        self.default_filter_date.model().clear()
+        m = QStandardItemModel()
+        items = [
+                [funcs.tr("Toutes les dates"), 'alldates'],
+                [funcs.tr("Mois en cours"), 'thismonth'],
+                [funcs.tr("Trimestre en cours"), 'thistrimester'],
+                [funcs.tr("Semestre en cours"), 'thissemester'],
+                [funcs.tr("Année en cours"), 'thisyear'],
+                [funcs.tr("Le mois dernier"), 'previousmonth'],
+                [funcs.tr("L'année dernière"), 'previousyear'],
+                [funcs.tr("30 derniers jours"), 'last30days'],
+                [funcs.tr("60 derniers jours"), 'last60days'],
+                [funcs.tr("90 derniers jours"), 'last90days'],
+                [funcs.tr("12 derniers mois"), 'last12monthes']
+        ]
+        for item in items:
+            c = QStandardItem(item[0])
+            c.setEditable(False)
+            c.setData(item[1], Qt.UserRole)
+            m.appendRow(c)
+        self.default_filter_date.setModel(m)
+        idx = self.default_filter_date.findData(str(self._settings.value('default_filter_date',
+                                                                         globalsv.default_params['default_filter_date'])))
+        self.default_filter_date.setCurrentIndex(idx)
+
+        # dateformat_link
+        self.dateformat_link.mousePressEvent = lambda event: webbrowser.open(
+            'https://strftime.org/', new=2, autoraise=True)
+
+        # short_date_format
+        self.short_date_format.textChanged.connect(
+            self.short_date_format_changed)
+        self.short_date_format.setText(self._settings.value('short_date_format',
+                                                            globalsv.default_params['short_date_format']))
+        self.short_date_format_label.setText(
+            'exemple: <b>{}</b>'.format(datetime.now().strftime(self.short_date_format.text().strip())))
+
+        # long_date_format
+        self.long_date_format.textChanged.connect(
+            self.long_date_format_changed)
+        self.long_date_format.setText(self._settings.value('long_date_format',
+                                                           globalsv.default_params['long_date_format']))
+        self.long_date_format_label.setText(
+            'exemple: <b>{}</b>'.format(datetime.now().strftime(self.long_date_format.text().strip())))
+
+        # color_positive_amount
+        self.color_positive_amount_value = self._settings.value(
+            'color_positive_amount', globalsv.default_params['color_positive_amount'])
+        self.color_positive_amount.setStyleSheet(
+            'background:{};color:#fff;'.format(self.color_positive_amount_value))
+        self.color_positive_amount.clicked.connect(self.changePositiveColor)
+
+        # color_negative_amount
+        self.color_negative_amount_value = self._settings.value(
+            'color_negative_amount', globalsv.default_params['color_negative_amount'])
+        self.color_negative_amount.setStyleSheet(
+            'background:{};color:#fff;'.format(self.color_negative_amount_value))
+        self.color_negative_amount.clicked.connect(self.changeNegativeColor)
+
+        # color_credit_amount
+        self.color_credit_amount_value = self._settings.value(
+            'color_credit_amount', globalsv.default_params['color_credit_amount'])
+        self.color_credit_amount.setStyleSheet(
+            'background:{};color:#fff;'.format(self.color_credit_amount_value))
+        self.color_credit_amount.clicked.connect(self.changeCreditColor)
+
+        # Export/csv_separator
+        self.csv_separator.setText(self._settings.value(
+            'Export/csv_separator', globalsv.default_params['Export/csv_separator']))
+
+        # Export/csv_decimal
+        self.csv_decimal.setText(self._settings.value(
+            'Export/csv_decimal', globalsv.default_params['Export/csv_decimal']))
+
+        # Export/csv_dateformat
+        self.csv_dateformat.setText(self._settings.value(
+            'Export/csv_dateformat', globalsv.default_params['Export/csv_dateformat']))
+
+    def closeEvent(self, event):
+        event.ignore()
+
+    def eventFilter(self, obj, event):
+        if event.type() == QEvent.FocusIn:
+            obj.setStyleSheet('')
+            try:
+                obj.setPlaceholderText('')
+            except:
+                pass
+        return super(SettingsDialog, self).eventFilter(obj, event)
+
+    def short_date_format_changed(self, text):
+        try:
+            self.short_date_format_label.setText(
+                'exemple: <b>{}</b>'.format(datetime.now().strftime(text.strip())))
+        except:
+            self.short_date_format_label.setText('exemple: <b>erreur</b>')
+
+    def long_date_format_changed(self, text):
+        try:
+            self.long_date_format_label.setText(
+                'exemple: <b>{}</b>'.format(datetime.now().strftime(text.strip())))
+        except:
+            self.long_date_format_label.setText('exemple: <b>erreur</b>')
+
+    def changePositiveColor(self):
+        cc = QColorDialog(self)
+        cc.setCustomColor(
+            0, QColor(globalsv.default_params['color_positive_amount']))
+        cc.setCustomColor(1, QColor(self._settings.value(
+            'color_positive_amount', globalsv.default_params['color_positive_amount'])))
+        cc.setCustomColor(2, QColor(self.color_positive_amount_value))
+        cc.setCurrentColor(QColor(self.color_positive_amount_value))
+        if cc.exec_() == QMessageBox.Accepted:
+            self.color_positive_amount_value = cc.currentColor().name()
+            self.color_positive_amount.setStyleSheet(
+                'background:{};color:#fff;'.format(self.color_positive_amount_value))
+            cc.destroy()
+
+    def changeNegativeColor(self):
+        cc = QColorDialog(self)
+        cc.setCustomColor(
+            0, QColor(globalsv.default_params['color_negative_amount']))
+        cc.setCustomColor(1, QColor(self._settings.value(
+            'color_negative_amount', globalsv.default_params['color_negative_amount'])))
+        cc.setCustomColor(2, QColor(self.color_negative_amount_value))
+        cc.setCurrentColor(QColor(self.color_negative_amount_value))
+        if cc.exec_() == QMessageBox.Accepted:
+            self.color_negative_amount_value = cc.currentColor().name()
+            self.color_negative_amount.setStyleSheet(
+                'background:{};color:#fff;'.format(self.color_negative_amount_value))
+            cc.destroy()
+
+    def changeCreditColor(self):
+        cc = QColorDialog(self)
+        cc.setCustomColor(
+            0, QColor(globalsv.default_params['color_credit_amount']))
+        cc.setCustomColor(1, QColor(self._settings.value(
+            'color_credit_amount', globalsv.default_params['color_credit_amount'])))
+        cc.setCustomColor(2, QColor(self.color_credit_amount_value))
+        cc.setCurrentColor(QColor(self.color_credit_amount_value))
+        if cc.exec_() == QMessageBox.Accepted:
+            self.color_credit_amount_value = cc.currentColor().name()
+            self.color_credit_amount.setStyleSheet(
+                'background:{};color:#fff;'.format(self.color_credit_amount_value))
+            cc.destroy()
+
+    def validateForm(self):
+        if self.short_date_format.text().strip() == '':
+            QMessageBox.warning(self, appinfos.app_name, funcs.tr(
+                "Le format 'date courte' est incorrect!"))
+            return
+        try:
+            value = datetime.now().strftime(self.short_date_format.text().strip())
+        except:
+            QMessageBox.warning(self, appinfos.app_name, funcs.tr(
+                "Le format 'date courte' est incorrect!"))
+            return
+
+        if self.long_date_format.text().strip() == '':
+            QMessageBox.warning(self, appinfos.app_name, funcs.tr(
+                "Le format 'date longue' est incorrect!"))
+            return
+        try:
+            value = datetime.now().strftime(self.long_date_format.text().strip())
+        except:
+            QMessageBox.warning(self, appinfos.app_name, funcs.tr(
+                "Le format 'date longue' est incorrect!"))
+            return
+
+        if self.csv_dateformat.text().strip() == '':
+            QMessageBox.warning(self, appinfos.app_name, funcs.tr(
+                "Le format 'date' de l'exportation CSV est incorrect!"))
+            return
+        try:
+            value = datetime.now().strftime(self.csv_dateformat.text().strip())
+        except:
+            QMessageBox.warning(self, appinfos.app_name, funcs.tr(
+                "Le format 'date' de l'exportation CSV est incorrect!"))
+            return
+
+        if self.csv_separator.text().strip() == '':
+            QMessageBox.warning(self, appinfos.app_name, funcs.tr(
+                "Le séparateur de colones du format CSV est incorrect!"))
+            return
+
+        if self.csv_decimal.text().strip() == '':
+            QMessageBox.warning(self, appinfos.app_name, funcs.tr(
+                "Le séparateur des décimales du format CSV est incorrect!"))
+            return
+
+        self.accept()

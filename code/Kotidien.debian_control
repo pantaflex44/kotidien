@@ -1,0 +1,9 @@
+Package: Kotidien
+Version: 2021.0.2.0
+Section: office
+Priority: optional
+Architecture: amd64
+Depends: libc6 (>= 2.29)
+Maintainer: Christophe LEMOINE <pantaflex@tuta.io>
+Description: Gestion des finances personnelles assistee par ordinateur.
+Homepage: https://sourceforge.net/projects/kotidien/

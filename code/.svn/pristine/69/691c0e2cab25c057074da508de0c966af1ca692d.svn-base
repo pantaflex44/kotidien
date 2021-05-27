@@ -1,0 +1,85 @@
+#!/usr/bin/python3
+# -*- coding: utf-8 -*-
+
+"""
+@package Kotidien.ui
+"""
+"""
+Kotidien - Finances personnelles assistées par ordinateur
+Copyright (C) 2020-2021 Christophe LEMOINE
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
+"""
+import sys
+import os
+import json
+from datetime import datetime
+
+from PyQt5 import QtCore, QtWidgets, QtGui, uic
+from PyQt5.QtCore import *
+from PyQt5.QtWidgets import *
+from PyQt5.QtGui import *
+
+import libs.pycountry
+import currency
+
+import libs.completer
+import resources
+import appinfos
+import funcs
+import icons
+
+from datamodels import *
+
+
+class MdiFrame(QWidget):
+
+    _settings = None
+    _locale = None
+    _closable = True
+    _fi = None
+
+    updated = pyqtSignal()
+    forceUpdateRequired = pyqtSignal(bool)
+
+    def __init__(self, settings, locale, parent, fi: financial, closable: bool = True, *args, **kwargs):
+        self._settings = settings
+        self._locale = locale
+        self._closable = closable
+        self._fi = fi
+        self._shortDateFormat = self._settings.value('short_date_format')
+        self._longDateFormat = self._settings.value( 'long_date_format')
+        super(MdiFrame, self).__init__(parent, *args, **kwargs)
+        self._init_ui()
+
+    def _init_ui(self):
+        # self
+        self.ui = funcs.loadUiResource(funcs.rc('/ui/' + self.__class__.__name__ + '.ui'), self)
+        self.setLocale(QLocale(self._locale))
+        self.ui.setLocale(QLocale(self._locale))
+
+    def closeEvent(self, event):
+        if self._closable:
+            event.accept()
+        else:
+            event.ignore()
+
+    """def eventFilter(self, obj, event):
+        if event.type() == QEvent.FocusIn:
+            try:
+                obj.setStyleSheet('')
+                obj.setPlaceholderText('')
+            except:
+                pass
+        return super(MdiFrame, self).eventFilter(obj, event)"""

@@ -1,0 +1,31 @@
+#! /bin/sh
+
+echo "Création des répertoires..."
+mkdir -p ./Kotidien/DEBIAN
+mkdir -p ./Kotidien/usr/local/bin
+mkdir -p ./Kotidien/usr/local/Kotidien
+mkdir -p ./Kotidien/usr/share/applications
+mkdir -p ./Kotidien/usr/share/doc/Kotidien
+
+echo "Copie des fichiers..."
+cp ./Kotidien.linux/Kotidien.desktop ./Kotidien/usr/share/applications/Kotidien.desktop
+cp ./Kotidien.linux/Kotidien.debian_control ./Kotidien/DEBIAN/control
+cp ./Kotidien.linux/CHANGELOG.txt ./Kotidien/DEBIAN/changelog
+cp ./Kotidien/DEBIAN/changelog ./Kotidien/usr/share/doc/Kotidien/changelog.gz
+gzip -9 ./Kotidien/usr/share/doc/Kotidien/changelog.gz
+cp -R ./Kotidien.linux/* ./Kotidien/usr/local/Kotidien
+
+echo "Création du lien symbolique..."
+echo '#! /bin/sh
+
+chmod +x /usr/local/Kotidien/Kotidien
+ln -s /usr/local/Kotidien/Kotidien /usr/local/bin/Kotidien
+' > ./Kotidien/DEBIAN/postinst
+chmod 0775 ./Kotidien/DEBIAN/postinst
+
+echo "Création du paquet debian..."
+dpkg-deb --build Kotidien
+
+
+
+

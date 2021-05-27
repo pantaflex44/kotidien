@@ -1,0 +1,83 @@
+# -*- mode: python -*-
+import sys
+import os
+import io
+import shutil
+
+path = os.environ.get("_MEIPASS2", os.path.abspath("."))
+sys.path.append(path)
+import appinfos
+import globalsv
+
+copyfiles = [
+                ('LICENCE_icons8.pdf', '.'),
+                ('LICENCE_pycountry.txt', '.'),
+                ('LICENCE.txt', '.'),
+                ('CHANGELOG.txt', '.'),
+                ('README.md', '.'),
+                ('HOWTO.md', '.'),
+                ('Icon.ico', '.'),
+                ('libs/pycountry', 'pycountry')
+            ]
+
+from pkgutil import iter_modules
+def module_exists(module_name):
+    return module_name in (name for loader, name, ispkg in iter_modules())
+hiddenimports = [m[4] for m in globalsv.modules if module_exists(m[4])]
+
+def generate_rc(template='Kotidien.rc.tpl', output='Kotidien.rc'):
+    version_str = appinfos.app_version
+    version_tuple = tuple(map(int, version_str.split('.')))
+    date_tuple = (appinfos.app_date.year, appinfos.app_date.month, appinfos.app_date.day)
+    tpl = io.open(template, encoding='utf-8')
+    out = io.open(output, 'w', encoding='utf-8')
+    with tpl, out:
+        out.write(tpl.read().format(
+            version=version_str,
+            version_tuple=version_tuple,
+            name=appinfos.app_name,
+            exe=appinfos.app_exe,
+            description=appinfos.app_description,
+            author=appinfos.app_author,
+            copyright=appinfos.app_copyright,
+            date_tuple=date_tuple))
+        return output
+
+block_cipher = None
+
+a = Analysis([appinfos.app_mainscript],
+             pathex=[path],
+             binaries=[],
+             datas=copyfiles,
+             hiddenimports=hiddenimports,
+             hookspath=[],
+             runtime_hooks=[],
+             excludes=[],
+             win_no_prefer_redirects=False,
+             win_private_assemblies=False,
+             cipher=block_cipher,
+             noarchive=False)
+
+pyz = PYZ(a.pure, a.zipped_data,
+          cipher=block_cipher)
+
+exe = EXE(pyz,
+          a.scripts,
+          [],
+          exclude_binaries=True,
+          name=appinfos.app_name,
+          debug=False,
+          bootloader_ignore_signals=False,
+          strip=False,
+          upx=True,
+          console=False,
+          icon=appinfos.app_exeicon,
+          version=generate_rc())
+          
+coll = COLLECT(exe,
+               a.binaries,
+               a.zipfiles,
+               a.datas,
+               strip=False,
+               upx=True,
+               name=appinfos.app_name)

@@ -1,0 +1,167 @@
+#!/usr/bin/python3
+# -*- coding: utf-8 -*-
+
+"""
+@package Kotidien
+"""
+"""
+Kotidien - Finances personnelles assistées par ordinateur
+Copyright (C) 2020-2021 Christophe LEMOINE
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
+"""
+
+import os
+import sys
+import importlib
+import PIL
+
+from PyQt5.QtCore import QT_VERSION_STR
+from PyQt5.Qt import PYQT_VERSION_STR
+from sip import SIP_VERSION_STR
+
+import appinfos
+
+
+# url de la page d'aide
+help_link = 'https://sourceforge.net/p/kotidien/discussion/aide/'
+
+# paramètres par défaut
+default_params = {'locale': 'fr_FR',
+                  'create_save': True,
+                  'short_date_format': '%x',
+                  'long_date_format': '%A %e %B %Y',
+                  'color_positive_amount': '#009589',
+                  'color_credit_amount': '#ff0000',
+                  'color_negative_amount': '#800000',
+                  'view_accounts_cb': True,
+                  'selective_expand': False,
+                  'default_filter_active': True,
+                  'default_filter_date': 'last90days',
+                  'default_filter_hide_pointed': False,
+                  'Accounts/default_sort_descending': True,
+                  'Accounts/default_sort_column': 0,
+				  'Accounts/default_filter_hide_pointed': False,
+				  'Accounts/default_filter_active': True,
+                  'Planner/auto_delete_finished': False,
+                  'Planner/auto_post': False,
+                  'Export/csv_separator': ';',
+                  'Export/csv_decimal': ',',
+                  'Export/csv_dateformat': '%x',
+                  'firstrun': False,
+				  'show_splashscreen': False,
+				  'askOnClose': True}
+
+# paramètres du thème
+theme = {'Highlight': '#00c5b5',
+         'HighlightedText': '#000000',
+         'Link': '#009589',
+         'LinkVisited': '#7f8c8d',
+         'WindowText': '#232627',
+         'Button': '#eff0f1',
+         'Light': '#ffffff',
+         'Midlight': '#f7f7f8',
+         'Dark': '#888e93',
+         'Text': '#232627',
+         'BrightText': '#ffffff',
+         'ButtonText': '#232627',
+         'Base': '#fcfcfc',
+         'Window': '#eff0f1',
+         'Shadow': '#474a4c',
+         'AlternateBase': '#eff0f1',
+         'NoRole': '#000000',
+         'ToolTipBase': '#232627',
+         'ToolTipText': '#fcfcfc'}
+
+# paramètres du thème (éléments désactivés)
+theme_disabled = {'HighlightedText': '#808080',
+                  'Text': '#808080',
+                  'Link': '#808080',
+                  'LinkVisited': '#808080',
+                  'WindowText': '#808080',
+                  'BrightText': '#808080',
+                  'Base': '#eeeeee',
+                  'AlternateBase': '#eeeeee',
+                  'NoRole': '#808080',
+                  'ToolTipText': '#808080',
+                  'ToolTipBase': '#eeeeee',
+                  'Window': '#eeeeee',
+                  'Button': '#eeeeee',
+                  'ButtonText': '#808080'}
+
+# --------------------------------------------------------------------------------------------------------------------------------------------
+
+# chemin du dossier personnel de travail
+personnal_path = os.path.expanduser(os.path.join('~', '.' + appinfos.app_name))
+
+# dossier contenant les traductions utilisables
+i18n_path = os.path.join(personnal_path, 'languages')
+
+# dossier 'vendor' pour la personnalisation de l'application
+vendor_path = os.path.join(personnal_path, 'vendor')
+
+# ne pas toucher ;-)
+translator = None
+
+# récupère les differentes versions des modules utilisés
+pv = sys.version_info  # version de Python
+if pv.major >= 3 and pv.minor >= 8:
+	from importlib.metadata import version
+
+# liste des modules utilisés
+modules = [['pycountry', '', ['GNU Lesser General Public License v2', 'https://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt'], ['Christian Theune', 'ct@flyingcircus.io', 'https://pypi.org/project/pycountry/'], ''],
+		   ['nh-currency', '', ['BSD License (BSD 3 Clauses)', 'https://www.freebsd.org/copyright/license/'], ['Near Huscarl', 'near.huscarl@gmail.com', 'https://github.com/NearHuscarl/py-currency'], 'currency'],
+		   ['pyqtgraph', '', ['MIT License', 'https://fr.wikipedia.org/wiki/Licence_MIT'], ['Luke Campagnola', 'luke.campagnola@gmail.com', 'http://www.pyqtgraph.org'], 'pyqtgraph'],
+		   ['fpdf2', '', ['GNU Lesser General Public License v3', 'https://www.gnu.org/licenses/lgpl-3.0.txt'], ['Olivier PLATHEY ported by Max', 'maxpat78@yahoo.it', 'https://pyfpdf.github.io/fpdf2/'], 'fpdf'],
+		   ['ofxtools', '', ['MIT License', 'https://fr.wikipedia.org/wiki/Licence_MIT'], ['Christopher Singley', 'csingley@gmail.com', 'https://github.com/csingley/ofxtools'], 'ofxtools'],
+		   ['cryptography', '', ['BSD License (BSD 2 Clauses)', 'https://www.freebsd.org/copyright/license/'], ['The cryptography developers', 'cryptography-dev@python.org', 'https://github.com/pyca/cryptography'], 'cryptography'],
+		   ['python-dateutil', '', ['BSD License', 'https://www.freebsd.org/copyright/license/'], ['Gustavo Niemeyer', 'gustavo@niemeyer.net', 'https://dateutil.readthedocs.io/'], 'dateutil'],
+		   ['glibc', '', ['GNU Lesser General Public License v3', 'https://www.gnu.org/licenses/lgpl-3.0.txt'], ['Zygmunt Krynicki', 'zygmunt.krynicki@canonical.com', 'https://github.com/zyga/python-glibc/'], 'glibc'],
+		   ['pdf2image', '', ['MIT License', 'https://fr.wikipedia.org/wiki/Licence_MIT'], ['Edouard Belval', 'edouard@belval.org', 'https://github.com/Belval/pdf2image'], 'pdf2image'],
+		   ['six', '', ['MIT License', 'https://fr.wikipedia.org/wiki/Licence_MIT'], ['Benjamin Peterson', 'benjamin@python.org', 'https://github.com/benjaminp/six'], 'six']]
+for i in range(len(modules)):
+	try:
+		ms = [modules[i][0], modules[i][4]]
+		m = ms[0] if ms[1] == '' else ms[1]
+		spec = importlib.util.find_spec(m)
+		v = ''
+		if not(spec is None):
+			if pv.major >= 3 and pv.minor >= 8:
+				while (len(ms) > 0):
+					p = ms.pop()
+					try:
+						v = version(p)
+						break
+					except:
+						continue
+			else:
+				if not(spec.loader is None):
+					loaded = spec.loader.load_module()
+					v = loaded.__version__  if hasattr(loaded, '__version__') else ''
+			modules[i][0] = spec.name
+			modules[i][1] = v
+		else:
+			raise Exception("Critical error: '{}' python module not found.".format(m))
+	except Exception as ex:
+		print(ex)
+		sys.exit(0)
+
+modules.insert(0, [appinfos.app_name, appinfos.app_version, ['GNU General Public License v3', 'https://docs.python.org/3/license.html#psf-license'], ['Christophe LEMOINE', 'pantaflex@tuta.io', 'https://sourceforge.net/projects/kotidien/'], ''])
+modules.insert(1, ['Python', str(pv.major) + '.' + str(pv.minor) + '.' + str(pv.micro), ['PSF Licence Agreement', 'https://docs.python.org/3/license.html#psf-license'], ['Python Software Foundation', 'psf@python.org', 'https://www.python.org/'], ''])
+modules.insert(2, ['Qt', QT_VERSION_STR, ['GNU General Public License v3', 'https://www.gnu.org/licenses/gpl-3.0.txt'], ['The Qt Company Ltd', 'https://www.qt.io/contact-us', 'https://www.qt.io/'], ''])
+modules.insert(3, ['SIP', SIP_VERSION_STR, ['GNU General Public License v3', 'https://www.gnu.org/licenses/gpl-3.0.txt'], ['Riverbank Computing Limited', 'info@riverbankcomputing.com', 'https://www.riverbankcomputing.com/software/sip/'], ''])
+modules.insert(4, ['PyQt', PYQT_VERSION_STR, ['GNU General Public License v3', 'https://www.gnu.org/licenses/gpl-3.0.txt'], ['Riverbank Computing Limited', 'info@riverbankcomputing.com', 'https://www.riverbankcomputing.com/software/sip/'], 'PyQt5'])
+modules.insert(5, ['PIL', PIL.__version__, ['MIT License', 'https://fr.wikipedia.org/wiki/Licence_MIT'], ['Secret Labs AB (PythonWare)', 'info@pythonware.com', 'http://www.pythonware.com/products/pil'], ''])
+
+# --------------------------------------------------------------------------------------------------------------------------------------------
