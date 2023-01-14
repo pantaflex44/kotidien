@@ -2,6 +2,9 @@
 
 ![Kotidien](https://a.fsdn.com/allura/p/kotidien/icon?1614505402?&w=90)
 
+**[Cliquez ici pour la version Web (online)!](https://github.com/pantaflex44/KotidienWeb)**
+Sinon, bonne lecture :-)
+
 Kotidien est une application dédiée à la gestion de votre argent. Comptes bancaires, cartes de paiements autonomes, et portefeuille d'espèces. Totalement libre et gratuite, elle vous permets de tenir vos comptes d'une main de fer. Écrite en Python 3 et compatible Linux (intégration parfaite sous KDE via l'utilisation de QT 5.12), Microsoft Windows 7 et supérieurs, Mac OS 10.11 et supérieurs.
 Kotidien vous donne un accès permanent et en temps réel sur vos différents soldes, permets aussi d'automatiser l'écriture de vos transaction récurrentes, de pointer celles mises à jour sur votre interface bancaire, etc
 Agencées au jour le jour, supplantées par une vue calendrier, et synthétisées sur des graphiques clairs, toutes vos transactions sont réunies au sein de Kotidien.
