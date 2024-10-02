@@ -12,7 +12,6 @@ echo "\nCopie des fichiers..."
 cp ./Kotidien.linux/CHANGELOG.md ./debian/changelog
 cp ./Kotidien.linux/Kotidien.debian_control ./debian/control
 cp ./Kotidien.linux/README.md ./debian/README.Debian
-cp ./Kotidien.linux/COPYRIGHT.txt ./debian/copyright
 cp ./Kotidien.linux/LICENCE.txt ./debian/license
 cp ./Kotidien.linux/Kotidien.desktop ./Kotidien/usr/share/applications/Kotidien.desktop
 cp ./debian/control ./Kotidien/DEBIAN/control
