@@ -115,7 +115,6 @@ if sys.platform.startswith('linux'):
     copyfiles.append((os.path.join(path, 'icons', 'Icon.png'), '.'))
     copyfiles.append((os.path.join(path, generate_desktop_entry()), '.'))
     copyfiles.append((os.path.join(path, generate_debian_control()), '.'))
-    copyfiles.append((os.path.join(path, 'COPYRIGHT.txt'), '.'))
 for file in copyfiles:
     if os.path.isdir(file[0]):
         topath = os.path.join(DISTPATH, file[1])
