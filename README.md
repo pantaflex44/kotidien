@@ -1,3 +1,5 @@
+***ATTENTION*: La compatibilité du code avec les dernières versions de Python et des dépendances requises n'est plus assuré. Le dépot est désormais proposé pour l'exemple. Toutefois, la majorité du code reste fonctionnel et pourra peut être donner de l'inspiration pour son travail personnel.**
+
 # Kotidien
 
 ![Kotidien](https://a.fsdn.com/allura/p/kotidien/icon?1614505402?&w=90)
