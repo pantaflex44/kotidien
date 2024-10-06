@@ -167,7 +167,7 @@ class HTMLDelegate(QStyledItemDelegate):
             if index.column() == 2:
                 offset_x = offset_x + 20
 
-        point = QPoint(offset_x, offset_y)
+        point = QPoint(int(offset_x), int(offset_y))
         painter.translate(point)
         painter.setClipRect(textRect.translated(-point))
         if not index.parent().isValid():
@@ -202,7 +202,7 @@ class HTMLDelegate(QStyledItemDelegate):
                 if not(itm is None) and not index.parent().isValid():
                     h += 8
 
-        return QSize(doc.size().width(), h)
+        return QSize(int(doc.size().width()), int(h))
 
 
 class QCalendarWidgetEx(QCalendarWidget):

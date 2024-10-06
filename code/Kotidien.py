@@ -263,7 +263,7 @@ def createApp():
     QCoreApplication.setOrganizationName(appinfos.app_author)
     QCoreApplication.setApplicationVersion(appinfos.app_version)
 
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
     app.setApplicationDisplayName(appinfos.app_name)
     app.setApplicationName(appinfos.app_name)
     app.setApplicationVersion(appinfos.app_version)

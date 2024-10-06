@@ -78,7 +78,7 @@ class QHLine(QFrame):
 		self.setLineWidth(1)
 		self.setEnabled(False)
 		self.setContentsMargins(0, h - self.lineWidth(), 0, 0)
-		self.setMinimumSize(QSize(0, h))
+		self.setMinimumSize(QSize(0, int(h)))
 
 class HTMLDelegate(QStyledItemDelegate):
 
@@ -129,7 +129,7 @@ class HTMLDelegate(QStyledItemDelegate):
 			if index.column() == 2:
 				offset_x = offset_x + 20
 
-		point = QPoint(offset_x, offset_y)
+		point = QPoint(int(offset_x), int(offset_y))
 		painter.translate(point)
 		painter.setClipRect(textRect.translated(-point))
 
@@ -151,9 +151,10 @@ class HTMLDelegate(QStyledItemDelegate):
 		doc = QTextDocument()
 		doc.setHtml(' ' + options.text + ' ')
 
-		h = doc.size().height()
+		h = int(doc.size().height())
+		w = int(doc.size().width())
 
-		return QSize(doc.size().width(), h)
+		return QSize(w, h)
 
 
 class MdiStats(MdiFrame):

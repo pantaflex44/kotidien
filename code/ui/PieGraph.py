@@ -93,7 +93,7 @@ class PieGraph(QGraphicsView):
 				g = QGraphicsEllipseItemEx(0, 0, width, height)
 				g.toolTip = '<b>{}</b><br />{}%'.format(k, round(v, 2))
 				g.setStartAngle(start_angle * 16)
-				g.setSpanAngle(pie * 16)
+				g.setSpanAngle(int(pie * 16))
 				g.setBrush(brushes[i])
 				g.setPen(QPen(QColor(self._background)))
 				scn.addItem(g)			

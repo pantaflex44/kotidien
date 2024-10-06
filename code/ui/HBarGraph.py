@@ -107,7 +107,7 @@ class HBarGraph(PlotWidget):
 			mousePoint = self.plotItem.vb.mapSceneToView(pos)
 			try:
 				value = mousePoint.x()
-				pt = self.mapToGlobal(QPoint(pos.x(), pos.y()))
+				pt = self.mapToGlobal(QPoint(int(pos.x()), int(pos.y())))
 				if callable(self.tooltipCallback):
 					value = self.tooltipCallback(value)
 				QToolTip.showText(pt, '{}'.format(value))

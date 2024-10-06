@@ -28,4 +28,4 @@ import currency
 
 def formatCurrency(value: float = 0.0, alpha_3: str = 'EUR'):
     cursymb = currency.symbol(alpha_3)
-    return cursymb + ' ' + locale.format('%.2f', value, grouping=True)
+    return cursymb + ' ' + locale.format_string('%.2f', value, grouping=True)

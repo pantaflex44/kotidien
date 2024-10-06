@@ -32,7 +32,7 @@ import requests
 import threading
 from datetime import datetime, date, timedelta
 
-from PyQt5.QtCore import QCoreApplication, QFile, QTextStream, QByteArray, QIODevice
+from PyQt5.QtCore import QCoreApplication, QFile, QTextStream, QByteArray, QIODevice, QSize
 from PyQt5.QtGui import QIcon
 from PyQt5.uic import loadUi
 
@@ -174,7 +174,7 @@ def loadUiResource(respath, parent):
 
     # traduit toutes les chaines de caracteres des fichiers contenant les interfaces graphiques (*.ui)
     cn = os.path.basename(respath).replace('.ui', '')
-    ms = '(?<=<string>).*?(?=<\/string>)'
+    ms = '(?<=<string>).*?(?=</string>)'
     pattern = re.compile(ms)
     matches = pattern.finditer(data)
     for m in matches:

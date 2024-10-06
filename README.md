@@ -1,5 +1,3 @@
-***ATTENTION*: La compatibilité du code avec les dernières versions de Python et des dépendances requises n'est plus assuré. Le dépot est désormais proposé pour l'exemple. Toutefois, la majorité du code reste fonctionnel et pourra peut être donner de l'inspiration pour son travail personnel.**
-
 # Kotidien
 
 ![Kotidien](https://a.fsdn.com/allura/p/kotidien/icon?1614505402?&w=90)
@@ -166,10 +164,22 @@ A python (3.5+) module that wraps pdftoppm and pdftocairo to convert PDF to a PI
 
 Licence [MIT](https://choosealicense.com/licenses/mit/)
 
+### [setuptools](https://pypi.org/project/setuptools/)
+
+Easily download, build, install, upgrade, and uninstall Python packages.
+
+Licence [MIT](https://choosealicense.com/licenses/mit/)
+
+### [PyQt5](https://pypi.org/project/PyQt5/)
+
+Python bindings for the Qt cross platform application toolkit.
+
+Licence [GNU Lesser General Public License v3](https://www.gnu.org/licenses/lgpl-3.0.en.html)
+
 
 ## Informations
 
-Copyright (c)2020-2021 [Christophe LEMOINE](pantaflex@tuta.io)
+Copyright (c)2020-2024 [Christophe LEMOINE](pantaflex@tuta.io)
 
 [https://sourceforge.net/projects/kotidien/](https://sourceforge.net/projects/kotidien/)
 
@@ -183,31 +193,30 @@ Toute modification, redistribution ou amélioration devra citer l'auteur origina
 [GNU General Public License v3](https://www.gnu.org/licenses/gpl-3.0.en.html)
 
 
-## Contribuer
+## Contribuer / Compiler
 
-### Compiler les ressources
+### 1) Créer un environement virtuel
 
 ```bash
+$ pip3 install virtualenv
+$ python3 -m venv env
+$ source env/bin/activate
+```
+
+### 2) Installer les dépendances
+
+```bash
+$ pip3 install pycountry nh-currency pyqtgraph fpdf2 ofxtools cryptography python-dateutil glibc six pdf2image setuptools PyQt5
+```
+
+### 3) Compiler les ressources
+
+```bash
+$ cd code
 $ pyrcc5 resources.qrc -o resources.py
 ```
 
-### Construire l'éxécutable avec 'pyinstaller'
-
-```bash
-# linux
-# installer pyinstaller
-$ pip3 install pyinstaller
-# freezer l'application
-$ pyinstaller --clean --onefile --windowed --distpath ../dist/Kotidien.linux --workpath ../build/linux -y Kotidien.spec
-
-# windows
-# installer pyinstaller
-> pip install pyinstaller
-# freezer l'application
-> pyinstaller.exe --clean --onefile --windowed --distpath ../dist/Kotidien.win --workpath ../build/win -y Kotidien.spec
-```
-
-### Traduire et compiler les traductions
+### 4) [Facultatif] - Traduire et compiler les traductions
 
 ```bash
 # créé le catalogue
@@ -219,6 +228,23 @@ $ python3 lupdate_ts_repair.py fr_FR.ts
 # compile le catalogue
 $ lrelease fr_FR.ts -qm fr_FR.qm -verbose
 ```
+
+### 5) Construire l'éxécutable avec 'pyinstaller'
+
+```bash
+# linux
+# installer pyinstaller
+$ pip3 install pyinstaller
+# freezer l'application
+$ pyinstaller --clean --distpath ../dist/Kotidien.linux --workpath ../build/linux -y Kotidien.spec
+
+# windows
+# installer pyinstaller
+> pip install pyinstaller
+# freezer l'application
+> pyinstaller.exe --clean --distpath ../dist/Kotidien.win --workpath ../build/win -y Kotidien.spec
+```
+
 
 ### Fichiers de données
 

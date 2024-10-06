@@ -39,7 +39,7 @@ import libs.pycountry
 import currency
 from fpdf import FPDF
 from pdf2image import convert_from_path
-from PIL.ImageQt import ImageQt
+from PIL.Image import Image
 
 import libs.completer
 import resources
@@ -259,7 +259,7 @@ class ExportDialog(QDialog):
                         if i > 0:
                             printer.newPage()
                         rect = painter.viewport()
-                        qtImage = ImageQt(image)
+                        qtImage = Image(image)
                         qtImageScaled = qtImage.scaled(rect.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
                         painter.drawImage(rect, qtImageScaled)
 

@@ -133,7 +133,7 @@ class VBarGraph(PlotWidget):
 				dataItem = self.plotItem.listDataItems()[k]
 				axis_x, axis_y = dataItem.getData()
 				value = axis_y[x]
-				pt = self.mapToGlobal(QPoint(pos.x(), pos.y()))
+				pt = self.mapToGlobal(QPoint(int(pos.x()), int(pos.y())))
 				if callable(self.tooltipCallback):
 					value = self.tooltipCallback(value)
 				QToolTip.showText(pt, '{}'.format(value))

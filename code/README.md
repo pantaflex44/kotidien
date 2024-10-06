@@ -164,6 +164,15 @@ A python (3.5+) module that wraps pdftoppm and pdftocairo to convert PDF to a PI
 
 Licence [MIT](https://choosealicense.com/licenses/mit/)
 
+### [setuptools](https://pypi.org/project/setuptools/)
+
+Easily download, build, install, upgrade, and uninstall Python packages
+
+### [PyQt5](https://pypi.org/project/PyQt5/)
+
+Python bindings for the Qt cross platform application toolkit
+
+
 
 ## Informations
 
@@ -181,31 +190,40 @@ Toute modification, redistribution ou amélioration devra citer l'auteur origina
 [GNU General Public License v3](https://www.gnu.org/licenses/gpl-3.0.en.html)
 
 
-## Contribuer
+## Contribuer / Compiler
 
-### Compiler les ressources
+### 1) Créer un environement virtuel
+
+```bash
+$ pip3 install virtualenv
+$ python3 -m venv env
+$ source env/bin/activate
+```
+
+### 2) Installer les dépendences
+
+```bash
+$ pip3 install pycountry
+$ pip3 install nh-currency
+$ pip3 install pyqtgraph
+$ pip3 install fpdf2
+$ pip3 install ofxtools
+$ pip3 install cryptography
+$ pip3 install python-dateutil
+$ pip3 install glibc
+$ pip3 install six
+$ pip3 install pdf2image
+$ pip3 install setuptools
+$ pip3 install PyQt5
+```
+
+### 3) Compiler les ressources
 
 ```bash
 $ pyrcc5 resources.qrc -o resources.py
 ```
 
-### Construire l'éxécutable avec 'pyinstaller'
-
-```bash
-# linux
-# installer pyinstaller
-$ pip3 install pyinstaller
-# freezer l'application
-$ pyinstaller --clean --onefile --windowed --distpath ../dist/Kotidien.linux --workpath ../build/linux -y Kotidien.spec
-
-# windows
-# installer pyinstaller
-> pip install pyinstaller
-# freezer l'application
-> pyinstaller.exe --clean --onefile --windowed --distpath ../dist/Kotidien.win --workpath ../build/win -y Kotidien.spec
-```
-
-### Traduire et compiler les traductions
+### 4) Traduire et compiler les traductions - *[Facultatif]*
 
 ```bash
 # créé le catalogue
@@ -217,6 +235,24 @@ $ python3 lupdate_ts_repair.py fr_FR.ts
 # compile le catalogue
 $ lrelease fr_FR.ts -qm fr_FR.qm -verbose
 ```
+
+### 5) Construire l'éxécutable avec 'pyinstaller'
+
+```bash
+# linux
+# installer pyinstaller
+$ pip3 install pyinstaller
+# freezer l'application
+$ pyinstaller --clean --distpath ../dist/Kotidien.linux --workpath ../build/linux -y Kotidien.spec
+
+# windows
+# installer pyinstaller
+> pip install pyinstaller
+# freezer l'application
+> pyinstaller.exe --clean --distpath ../dist/Kotidien.win --workpath ../build/win -y Kotidien.spec
+```
+
+Puis rendez-vous dans le dossier ```dist``` pour retrouver la version compilée de Kotidien!
 
 ### Fichiers de données
 

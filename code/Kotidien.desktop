@@ -13,3 +13,4 @@ Type=Application
 Categories=Application;Office;
 Name[fr_FR]=Kotidien
 MimeType=application/kot;
+StartupNotify=true

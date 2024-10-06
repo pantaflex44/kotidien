@@ -59,7 +59,7 @@ class QHLine(QFrame):
         self.setLineWidth(1)
         self.setEnabled(False)
         self.setContentsMargins(0, h - self.lineWidth(), 0, 0)
-        self.setMinimumSize(QSize(0, h))
+        self.setMinimumSize(QSize(0, int(h)))
 
 class MdiHome(MdiFrame):
 
@@ -261,7 +261,7 @@ class MdiHome(MdiFrame):
                     amount = axis_y.tolist()[p]
                     dt_format = date(year, month, day).strftime(self._longDateFormat)
                     amt_format = libs.currencies.formatCurrency(amount, alpha_3)
-                    pt = graph.mapToGlobal(QPoint(pos.x(), pos.y()))
+                    pt = graph.mapToGlobal(QPoint(int(pos.x()), int(pos.y())))
                     QToolTip.showText(pt, funcs.tr("<small>{}</small><br /><b>{}</b>").format(dt_format, amt_format))
                     self.amountEvoVLine = graph.addLine(x=day, pen=pg.mkPen('#777', width=1, style=Qt.DashLine))
                 else:
@@ -292,7 +292,7 @@ class MdiHome(MdiFrame):
                     dt_format = date(year, month, day).strftime(self._longDateFormat)
                     dbt_format = libs.currencies.formatCurrency(debit, alpha_3)
                     crd_format = libs.currencies.formatCurrency(credit, alpha_3)
-                    pt = graph.mapToGlobal(QPoint(pos.x(), pos.y()))
+                    pt = graph.mapToGlobal(QPoint(int(pos.x()), int(pos.y())))
                     QToolTip.showText(pt, funcs.tr("<small>{}</small><br />Dépenses totales: <b>{}</b><br />Revenus totaux: <b>{}</b>").format(dt_format, dbt_format, crd_format))
                     self.credebwidgetVLine = graph.addLine(x=day, pen=pg.mkPen('#777', width=1, style=Qt.DashLine))
                 else:
