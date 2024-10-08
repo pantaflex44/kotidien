@@ -195,7 +195,15 @@ Toute modification, redistribution ou amélioration devra citer l'auteur origina
 
 ## Contribuer / Compiler
 
-### 1) Créer un environement virtuel
+### Utiliser un conteneur **Docker**. Tout terrain, simple et efficace.
+
+[Benoit485](https://github.com/Benoit485) propose d'utiliser Docker pour compiler et lancer Kotidien sur votre machine sans vous soucier des versions de Python et des dépendances requises. Pratique non? 😉
+
+Pour ce faire, vous retrouverez toutes les instructions nécessaires dans son dépot dédié: [Kotidien_docker](https://github.com/Benoit485/Kotidien_docker)  
+
+### Compiler manuellement. J'aime le cambouis, j'y mets les mains...
+
+#### 1) Créer un environement virtuel
 
 ```bash
 $ pip3 install virtualenv
@@ -203,20 +211,20 @@ $ python3 -m venv env
 $ source env/bin/activate
 ```
 
-### 2) Installer les dépendances
+#### 2) Installer les dépendances
 
 ```bash
 $ pip3 install pycountry nh-currency pyqtgraph fpdf2 ofxtools cryptography python-dateutil glibc six pdf2image setuptools PyQt5
 ```
 
-### 3) Compiler les ressources
+#### 3) Compiler les ressources
 
 ```bash
 $ cd code
 $ pyrcc5 resources.qrc -o resources.py
 ```
 
-### 4) [Facultatif] - Traduire et compiler les traductions
+#### 4) [Facultatif] - Traduire et compiler les traductions
 
 ```bash
 # créé le catalogue
@@ -229,7 +237,7 @@ $ python3 lupdate_ts_repair.py fr_FR.ts
 $ lrelease fr_FR.ts -qm fr_FR.qm -verbose
 ```
 
-### 5) Construire l'éxécutable avec 'pyinstaller'
+#### 5) Construire l'éxécutable avec 'pyinstaller'
 
 ```bash
 # linux
